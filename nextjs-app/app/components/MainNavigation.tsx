@@ -11,7 +11,7 @@ interface IMainNavigationProps {
 }
 
 const MainNavigation: React.FunctionComponent<IMainNavigationProps> = async (props) => {
-  const { data: { items } } = await sanityFetch({
+  const { data } = await sanityFetch({
     query: `*[_type == "settings"][0]{
       "items": navigation.desktop[]{
         ...,
@@ -48,6 +48,8 @@ const MainNavigation: React.FunctionComponent<IMainNavigationProps> = async (pro
     // Metadata should never contain stega
     stega: false,
   });
+
+  const items = data?.items || [];
   return (
     <nav className="responsive-gap-sm hidden md:flex">
       {items?.map((item: any) => (

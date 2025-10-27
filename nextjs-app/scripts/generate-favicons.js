@@ -1,5 +1,5 @@
 const path = require("path");
-require("dotenv").config({ path: path.resolve(__dirname, "..", ".env.local") }); // Load .env.local
+require("dotenv").config({ path: path.resolve(__dirname, "..", ".env") }); // Load .env
 
 const fs = require("fs").promises;
 const sharp = require("sharp");

@@ -15,7 +15,7 @@ import { cn } from '@/app/lib/utils';
 
 export const MobileNavigation: React.FunctionComponent = async () => {
 
-  const { data: { items } } = await sanityFetch({
+  const { data } = await sanityFetch({
     query: `*[_type == "settings"][0]{
       "items": navigation.mobile[]{
         ...,
@@ -52,6 +52,8 @@ export const MobileNavigation: React.FunctionComponent = async () => {
     // Metadata should never contain stega
     stega: false,
   });
+
+  const items = data?.items || [];
 
 
   return (
