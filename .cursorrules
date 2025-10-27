@@ -1,0 +1,71 @@
+# .cursorrules - Project Intelligence for Next.js + Sanity Inline Editor
+
+## Workspace Structure (CRITICAL)
+
+- **Dual Workspaces**: The project is divided into two primary workspaces:
+  - `nextjs-app/`: Contains all Next.js application code (components, pages, lib, utils, etc.). **All Next.js related file operations MUST target paths within `nextjs-app/`**.
+  - `studio/`: Contains all Sanity Studio and schema code. **All Sanity Studio related file operations MUST target paths within `studio/`**.
+- **Implication for File Access**: When searching for, reading, or editing files, I MUST correctly identify which workspace the target file resides in and use the appropriate base path (e.g., `nextjs-app/app/components/MyComponent.tsx` or `studio/schemas/mySchema.ts`). Failure to do so will result in "file not found" errors.
+- **Cross-Workspace Operations**: If a task is focused on one workspace (e.g., `nextjs-app/`), I MUST NOT make changes to files in the other workspace (e.g., `studio/`) without your explicit permission, even if related issues are found.
+
+## Critical Implementation Paths & Patterns
+
+- **Route Management**:
+  - Never create new routes directly.
+  - All route creation must be approved and implemented by the project maintainer.
+  - Route structure should be documented in the memory bank (`systemPatterns.md` or `activeContext.md`) before implementation.
+- **Sanity Utilities in Client Components (e.g., `urlForImage`)**:
+  - Strictly separate URL generation logic from data-fetching logic that might use a tokenized Sanity client.
+  - `urlForImage` from `lib/image.ts` is intended to be client-safe if it _only_ uses `projectId` and `dataset` (public, from `lib/api.ts` or `NEXT_PUBLIC_` env vars) and does _not_ import/use the main tokenized Sanity client (`lib/client.ts`).
+  - The "token in browser" Sanity warning typically originates from other parts of the Sanity integration, such as live preview/editing setups (e.g., `defineLive.ts` in `sanity/lib/live.ts` using the main client), and should be investigated as a distinct issue from basic image URL generation. Verify that any token used by `defineLive` is a `NEXT_PUBLIC_` token if it's intended for client-side use.
+
+## User Preferences & Workflow
+
+- **Memory Bank**: The user relies _entirely_ on the Memory Bank (`memory-bank/` directory) after each session reset. All core files (`projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md`, `activeContext.md`, `progress.md`) MUST be read at the start of EVERY task.
+- **Memory Bank Updates**:
+  - Triggered by discovering new patterns, after significant changes, or by user request ("update memory bank").
+  - Involves reviewing ALL core files, documenting the current state, clarifying next steps, and updating `.cursorrules`.
+- **Task Management**:
+  - User will specify tasks. If a task feels too complex or is blocked, they may request to switch focus.
+  - `progress.md` should be kept up-to-date with task status.
+
+## Project-Specific Patterns
+
+- **Image Handling**:
+  - Unified Sanity image URL generation and `next/image` usage is achieved through a central `OptimizedImage.tsx` component and the `urlForImage` utility.
+  - `OptimizedImage.tsx` (in `nextjs-app/app/components/ui/`) wraps `next/image`, includes `"use client";`, and handles various props like `fill`, `objectFit`, `width`, `height`, `sizes`, `priority` to provide flexible image rendering. See `docs/image-handling.md` and `memory-bank/systemPatterns.md` for detailed usage.
+  - `urlForImage` (in `nextjs-app/sanity/lib/image.ts`) is client-safe and generates Sanity image URLs using only public `projectId` and `dataset`.
+- **File Organization**:
+  - Adhere to the dual workspace structure (`nextjs-app/` and `studio/`).
+  - Within `nextjs-app/`: components in `app/components/`, libs in `app/lib/`, etc.
+  - Within `studio/`: schemas in `schemas/`, etc.
+- **Styling**: Tailwind CSS.
+- **SEO**:
+  - Structured data (JSON-LD via Next.js Script component).
+  - Sitemap.
+
+## Known Challenges & Learnings
+
+- **Client/Server Component Interaction with Sanity**:
+  - The task to unify image URLs was successfully completed. Key learnings include:
+    - The importance of `"use client";` for components with React hooks (`OptimizedImage.tsx`).
+    - Ensuring `urlForImage` is client-safe by _not_ importing the main tokenized Sanity client and relying only on public `projectId` and `dataset`.
+    - Correctly managing `width`, `height`, `fill`, and `objectFit` props in `OptimizedImage.tsx` to achieve desired rendering (fill vs. fixed, cover vs. contain) and to control how dimensions are passed to `urlForImage` to prevent unwanted cropping by Sanity.
+    - The parent container of an `OptimizedImage` with `fill={true}` requires relative positioning and defined dimensions.
+  - The "token in browser" Sanity warning, likely from `defineLive.ts`, remains a separate issue to investigate.
+- **Build Errors**: Pay close attention to `npm run build` output for import errors or type errors, especially after refactoring utility functions or components.
+- **`next/image` `objectFit` Prop**: The `objectFit` prop on `next/image` is deprecated. Use Tailwind CSS classes (e.g., `object-cover`, `object-contain`) in the `className` prop instead.
+- **PortableText Custom Component/Style Rendering**: Issues like "Unknown list item style" can arise if the style/list type is not defined in the Sanity schema for the Portable Text field (e.g., in `blockContent.tsx` under `array.of[].styles` or `array.of[].lists`). Defining components on the frontend is necessary for rendering, but the schema must also declare these styles/lists as valid for the editor and data structure.
+- **Steganography Handling for Block Options**: When using string values from Sanity for block options (e.g., `textAlign`, `blockTheme`, `columns`) in conditional logic or for CSS class mapping, these strings might be steganography-encoded. Use `stegaClean()` from `@sanity/client/stega` to retrieve the clean value. The custom `stripChars.ts` utility is deprecated and has been removed.
+
+## Evolution of Project Decisions
+
+- Initially, there were two `urlForImage` implementations. Consolidated into `nextjs-app/sanity/lib/image.ts`.
+- The "Unify image URL implementations" task, after an initial problematic attempt, was successfully completed by methodically refactoring components and carefully managing props in `OptimizedImage.tsx`.
+- The custom `OptimizedImage.tsx` component was later entirely refactored and replaced with direct usage of `next/image` and the `urlForImage` utility. The `objectFit` prop was replaced with Tailwind classes, and a wrapper component `SanityImage.tsx` was updated to reflect this new pattern.
+- **Steganography Handling for Block Options**: When using string values from Sanity for block options (e.g., `textAlign`, `blockTheme`, `columns`) in conditional logic or for CSS class mapping, these strings might be steganography-encoded. Use `stegaClean()` from `@sanity/client/stega` to retrieve the clean value. The custom `stripChars.ts` utility is deprecated and has been removed.
+- **CSS Specificity for Nested Themes**: When dealing with themes applied to content blocks (especially if themes can be nested or interact), careful management of CSS specificity in global stylesheets (`globals.css`, `theme.css`) and utility class definitions (e.g., `_classes.ts`) is crucial to ensure styles apply as expected and to prevent unintended overrides. Adjustments to these files were necessary to fix display issues with nested themes.
+
+## Tool Usage Patterns
+
+- Use `edit_file`

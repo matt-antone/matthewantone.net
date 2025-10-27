@@ -1,0 +1,131 @@
+@theme inline {
+  /* theme layout options */
+  --header-height: 128px;
+  --footer-height: 50px;
+  --layout-spacing: 100px;
+  --text-h1: 5rem;
+  --text-h2: 4rem;
+  --text-h3: 3rem;
+  --text-h4: 2rem;
+  --text-h5: 1.5rem;
+  --text-h6: 1rem;
+  --text-d1: 6rem;
+  --text-d2: 5rem;
+  --text-d3: 4rem;
+  --text-d4: 3rem;
+  --text-d5: 2rem;
+  --text-d6: 1.5rem;
+  --layout-base: 2rem;
+  --layout-lg: 4rem;
+  --layout-xl: 7rem;
+  --layout-gap-sm: 1rem;
+  --layout-gap-base: 1.5rem;
+  --layout-gap-lg: 2rem;
+  --layout-gap-xl: 4rem;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-sans font-bold tracking-tight text-balance leading-none;
+  }
+
+  /* @container (min-width: 0rem) {
+    h1 {
+      @apply text-h3;
+    }
+
+    h2 {
+      @apply text-h4;
+    }
+
+    h3 {
+      @apply text-h5;
+    }
+  }
+
+  @container (min-width: 16rem) {
+    h1 {
+      @apply text-h1;
+    }
+
+    h2 {
+      @apply text-h2;
+    }
+
+    h3 {
+      @apply text-h3;
+    }
+  } */
+
+  p:empty {
+    display: none !important;
+  }
+
+  .heading-center {
+    text-align: center !important;
+  }
+
+  .responsive-gap {
+    @apply gap-[var(--layout-gap-base)] md:gap-[var(--layout-gap-lg)] lg:gap-[var(--layout-gap-xl)] xl:gap-[var(--layout-gap-xl)];
+  }
+
+  .responsive-gap-sm {
+    @apply gap-[var(--layout-gap-sm)] lg:gap-[calc(var(--layout-gap-base))] xl:gap-[calc(var(--layout-gap-lg))];
+  }
+
+  .responsive-gap-lg {
+    @apply gap-[calc(var(--layout-gap-base)*1.5)] md:gap-[calc(var(--layout-gap-lg)*1.5)] lg:gap-[calc(var(--layout-gap-xl)*1.5)];
+  }
+
+  .responsive-py {
+    @apply py-[var(--layout-gap-base)] md:py-[var(--layout-gap-lg)] lg:py-[var(--layout-gap-xl)];
+  }
+
+  .responsive-py-lg {
+    @apply py-[var(--layout-gap-lg)] md:py-[var(--layout-gap-xl)] lg:py-[var(--layout-gap-xl)];
+  }
+
+  .responsive-p {
+    @apply !p-[var(--layout-gap-base)] md:!p-[var(--layout-gap-lg)] lg:!p-[var(--layout-gap-xl)];
+  }
+
+  .responsive-py {
+    @apply py-[var(--layout-gap-base)] md:py-[var(--layout-gap-lg)] lg:py-[var(--layout-gap-xl)];
+  }
+
+  .responsive-px {
+    @apply px-[var(--layout-gap-base)] md:px-[var(--layout-gap-lg)] lg:px-[var(--layout-gap-xl)];
+  }
+
+  .text-display {
+    @apply font-black leading-none text-balance;
+  }
+
+  /* Bento Block */
+  .bento-item {
+    @apply font-bold text-balance;
+  }
+
+  /* .theme-primary * {
+    @apply !text-primary-foreground;
+  }
+
+  .theme-primary button,
+  .theme-primary button span {
+    @apply !bg-secondary !text-secondary-foreground;
+  }
+
+  .theme-secondary * {
+    @apply !text-secondary-foreground;
+  }
+
+  .theme-secondary button,
+  .theme-secondary button span {
+    @apply !bg-primary !text-primary-foreground;
+  } */
+}

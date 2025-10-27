@@ -1,0 +1,17 @@
+name: Backup dataset
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4  # ✅ Updated
+      - name: Backup dataset
+        run: |
+          # Your backup commands here
+      - uses: actions/upload-artifact@v4  # ✅ Updated
+        with:
+          name: backup-files
+          path: backup/

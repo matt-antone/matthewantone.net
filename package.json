@@ -1,0 +1,37 @@
+{
+  "name": "next-boilerplate-inline-editor",
+  "description": "Next.js + Sanity: A Powerful Website Starter with Real-time Visual Editing",
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:*",
+    "dev:next": "rm -rf .next && npm run dev --workspace=nextjs-app",
+    "dev:studio": "npm run dev --workspace=studio",
+    "import-sample-data": "cd studio && sanity dataset import sample-data.tar.gz --replace",
+    "typegen": "npm run typegen --workspace=studio && npm run typegen --workspace=nextjs-app"
+  },
+  "keywords": [
+    "Sanity",
+    "Next.js",
+    "Headless CMS",
+    "Visual Editing",
+    "Live Content API (LCAPI)",
+    "Real-time"
+  ],
+  "bugs": {
+    "url": "https://github.com/sanity-io/sanity-template-nextjs-clean/issues"
+  },
+  "homepage": "https://github.com/sanity-io/sanity-template-nextjs-clean#readme",
+  "workspaces": [
+    "studio",
+    "nextjs-app"
+  ],
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "npm-run-all": "^4.1.5"
+  },
+  "dependencies": {
+    "@sanity/vision": "^3.88.2",
+    "sanity-plugin-asset-source-unsplash": "^3.0.3",
+    "sanity-plugin-media": "^3.0.2",
+    "sanity-plugin-simpler-color-input": "^3.0.1"
+  }
+}

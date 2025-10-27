@@ -1,0 +1,72 @@
+/* Remove top and bottom margins from first and last child of prose and block-content */
+.prose:first-child,
+.block-content > *:first-child,
+.prose-block div > *:first-child,
+.content-block > *:first-child,
+.portable-text-block *:first-child {
+  margin-top: 0 !important;
+}
+
+.portable-text-block > h2:first-of-type {
+  margin-top: 0 !important;
+}
+
+.prose:last-child,
+.block-content > *:last-child,
+.prose-block > *:last-child,
+.content-block > *:last-child,
+.portable-text-block *:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* .prose:not(.not-prose) ul:not(.not-prose),
+  .prose:not(.not-prose) ol:not(.not-prose) {
+    @apply text-left max-w-3xl mx-auto;
+  } */
+
+.prose-block .portable-text-block > * {
+  margin-bottom: 2rem;
+}
+
+.prose-block .portable-text-block p:first-of-type {
+  font-size: 1.625rem !important;
+}
+
+.prose ol p:first-of-type,
+.prose ul p:first-of-type {
+  font-size: inherit !important;
+}
+
+.prose ol {
+  counter-reset: count 0;
+  padding-left: 0 !important;
+  list-style-type: none !important;
+  > li {
+    counter-increment: count 1;
+    position: relative;
+    padding-left: 4rem !important;
+    &::marker {
+      display: none !important;
+      visibility: hidden !important;
+      content: none !important;
+    }
+    &::before {
+      content: counter(count);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white) !important;
+      background-color: var(--secondary) !important;
+      padding: 0.5rem;
+      border-radius: 50%;
+      font-size: 2rem;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      line-height: 1;
+    }
+  }
+}
