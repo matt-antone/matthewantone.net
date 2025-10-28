@@ -153,6 +153,16 @@ echo ""
 
 # Create Home Assistant user and directory
 print_status "Setting up Home Assistant..."
+
+# Remove existing homeassistant user if it exists (from previous installation)
+if id "homeassistant" &>/dev/null; then
+    print_warning "Existing homeassistant user found, removing..."
+    sudo systemctl stop home-assistant 2>/dev/null || true
+    sudo deluser --remove-home homeassistant 2>/dev/null || true
+    sudo deluser homeassistant 2>/dev/null || true
+    sudo rm -rf /home/homeassistant 2>/dev/null || true
+fi
+
 sudo adduser --system --group --gecos "Home Assistant" homeassistant
 
 # Create Home Assistant directory
@@ -210,6 +220,28 @@ sudo mkdir -p /home/homeassistant/.homeassistant/www/sounds/gaming/background
 sudo chown -R homeassistant:homeassistant /home/homeassistant/.homeassistant
 
 print_success "Audio file directories created"
+echo ""
+
+# Download sample audio files
+print_status "Downloading audio files..."
+AUDIO_DIR="/home/homeassistant/.homeassistant/www/sounds/gaming/background"
+sudo mkdir -p "$AUDIO_DIR"
+
+# Download background audio
+print_status "Downloading scifi-background-001.mp3..."
+sudo curl -f -L -o "$AUDIO_DIR/scifi-background-001.mp3" \
+    https://www.matthewantone.net/files/scifi-background-001.mp3
+
+if [ -f "$AUDIO_DIR/scifi-background-001.mp3" ]; then
+    print_success "Background audio downloaded successfully"
+    # Set proper permissions
+    sudo chown -R homeassistant:homeassistant /home/homeassistant/.homeassistant/www
+    sudo chmod -R 644 "$AUDIO_DIR/scifi-background-001.mp3"
+else
+    print_warning "Could not download audio file - you can add it manually later"
+fi
+
+print_success "Audio files ready"
 echo ""
 
 # Print summary
