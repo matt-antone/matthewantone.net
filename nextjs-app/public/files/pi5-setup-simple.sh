@@ -153,11 +153,14 @@ echo ""
 
 # Create Home Assistant user and directory
 print_status "Setting up Home Assistant..."
-sudo adduser --system --group --no-create-home --gecos "Home Assistant" homeassistant
+sudo adduser --system --group --gecos "Home Assistant" homeassistant
 
 # Create Home Assistant directory
 sudo mkdir -p /home/homeassistant
 sudo chown homeassistant:homeassistant /home/homeassistant
+
+# Set HOME for the user
+sudo usermod -d /home/homeassistant homeassistant
 
 # Create Python virtual environment for Home Assistant
 print_status "Creating Python virtual environment..."
@@ -185,6 +188,7 @@ After=network-online.target
 Type=simple
 User=homeassistant
 WorkingDirectory=/home/homeassistant
+Environment="HOME=/home/homeassistant"
 Environment="PATH=/home/homeassistant/homeassistant/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ExecStart=/home/homeassistant/homeassistant/bin/hass -c "/home/homeassistant/.homeassistant"
 
@@ -194,8 +198,9 @@ EOF'
 
 sudo systemctl daemon-reload
 sudo systemctl enable home-assistant.service
+sudo systemctl start home-assistant.service
 
-print_success "Home Assistant service created and enabled"
+print_success "Home Assistant service created, enabled, and started"
 echo ""
 
 # Create audio file directories
@@ -217,11 +222,22 @@ echo "✅ RaspBee II Zigbee HAT configured"
 echo "✅ Audio directories created"
 echo ""
 echo "Next steps:"
-echo "1. Reboot the system: sudo reboot"
-echo "2. After reboot, Home Assistant will start automatically"
-echo "3. Access Home Assistant at: http://raspberrypi.local:8123"
-echo "4. Complete Home Assistant onboarding"
-echo "5. Install Zigbee integration via Home Assistant UI"
+echo ""
+echo "1. Reboot the system:"
+echo "   sudo reboot"
+echo ""
+echo "2. Wait 2-3 minutes after reboot, then find your Pi's IP address:"
+echo "   hostname -I"
+echo ""
+echo "3. Access Home Assistant in your browser:"
+echo "   http://<IP_ADDRESS>:8123"
+echo "   (Example: http://192.168.1.100:8123)"
+echo ""
+echo "4. If you can't access it, SSH back in and check the status:"
+echo "   sudo systemctl status home-assistant"
+echo "   sudo journalctl -u home-assistant -f"
+echo ""
+echo "5. Complete Home Assistant onboarding in the browser"
 echo ""
 echo "Home Assistant config directory:"
 echo "  /home/homeassistant/.homeassistant"
