@@ -204,3 +204,4 @@ echo "5. Configure WM8960 Audio HAT in Home Assistant"
 echo "6. Upload audio files to /usr/share/hassio/homeassistant/www/sounds/gaming/"
 echo ""
 print_success "Setup script completed successfully!"
+
